@@ -1,0 +1,1057 @@
+class Scene_Cheat
+	def main
+		@cheat_window = Window_Command.new(180,["Get Items", "Get Weapons", "Get Armors", "Edit Parameters", "Teleport","Save","Cancel"])
+		@cheat_window.active = true
+		@cheat_window.visible = true
+
+		@parameters_window = Window_Command.new(120,["Gold", "Level", "MHP","MMP","ATK","DEF","MAT","AGI","Cancel"])
+		@parameters_window.active = false
+		@parameters_window.visible = false
+
+		@gold_window = Window_Command.new(100,["+1K G", "5K G", "10K G","50K G","100K G","500K G","1M G","5M G","10M G","Cancel"])
+		@gold_window.active = false
+		@gold_window.visible = false
+
+		@level_window = Window_Command.new(100,["Lv 1", "Lv 10", "Lv 20","Lv 30","Lv 40","Lv 50","Lv 60","Lv 70","Lv 80","Lv 90","Lv 99","Lv 999","Cancel"])
+		@level_window.active = false
+		@level_window.visible = false
+
+		@mhp_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@mhp_window.active = false
+		@mhp_window.visible = false
+
+		@mmp_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@mmp_window.active = false
+		@mmp_window.visible = false
+
+		@atk_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@atk_window.active = false
+		@atk_window.visible = false
+
+		@def_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@def_window.active = false
+		@def_window.visible = false
+
+		@mat_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@mat_window.active = false
+		@mat_window.visible = false
+
+		@agi_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@agi_window.active = false
+		@agi_window.visible = false
+
+		@tp_window = Window_Command.new(160,["Save Pos 1", "Load Pos 1", "Save Pos 2","Load Pos 2","Save Pos 3","Load Pos 3","Cancel"])
+		@tp_window.active = false
+		@tp_window.visible = false
+
+		@item_window = Window_GetItem.new
+		@item_window.active = false
+		@item_window.visible = false
+
+		@number_window = Window_GetItemNumber.new(0,0)
+		@number_window.active = false
+		@number_window.visible = false
+
+		Graphics.transition
+		loop do
+			Graphics.update
+			Input.update
+			update
+			if $scene != self
+				break
+			end
+		end
+		Graphics.freeze
+		@cheat_window.dispose
+		@parameters_window.dispose
+		@gold_window.dispose
+		@level_window.dispose
+		@mhp_window.dispose
+		@mmp_window.dispose
+		@atk_window.dispose
+		@def_window.dispose
+		@mat_window.dispose
+		@agi_window.dispose
+		@tp_window.dispose
+		@item_window.dispose
+		@number_window.dispose
+		end
+
+		def update
+		@cheat_window.update
+		@parameters_window.update
+		@gold_window.update
+		@level_window.update
+		@mhp_window.update
+		@mmp_window.update
+		@atk_window.update
+		@def_window.update
+		@mat_window.update
+		@agi_window.update
+		@tp_window.update
+		@item_window.update
+		@number_window.update
+		if @cheat_window.active
+			update_cheat
+			return
+		end
+		if @parameters_window.active
+			update_parameters
+			return
+		end
+		if @gold_window.active
+			update_gold
+			return
+		end
+		if @level_window.active
+			update_level
+			return
+		end
+		if @mhp_window.active
+			update_mhp
+			return
+		end
+		if @mmp_window.active
+			update_mmp
+			return
+		end
+		if @atk_window.active
+			update_atk
+			return
+		end
+		if @def_window.active
+			update_def
+			return
+		end
+		if @mat_window.active
+			update_mat
+			return
+		end
+		if @agi_window.active
+			update_agi
+			return
+		end
+		if @tp_window.active
+			update_tp
+			return
+		end
+		if @item_window.active
+			update_item
+			return
+		end
+		if @number_window.active
+			update_number
+			return
+		end
+	end
+
+	def update_cheat
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @cheat_window.index
+			when 0
+				@cheat_window.active = false
+				@cheat_window.visible = false
+				@item_window.active = true
+				@item_window.visible = true
+				@item_window.set(0)
+				@item_window.refresh
+			when 1
+				@cheat_window.active = false
+				@cheat_window.visible = false
+				@item_window.active = true
+				@item_window.visible = true
+				@item_window.set(1)
+				@item_window.refresh
+			when 2
+				@cheat_window.active = false
+				@cheat_window.visible = false
+				@item_window.active = true
+				@item_window.visible = true
+				@item_window.set(2)
+				@item_window.refresh
+			when 3
+				@cheat_window.active = false
+				@cheat_window.visible = false
+				@parameters_window.active = true
+				@parameters_window.visible = true
+				@parameters_window.refresh
+			when 4
+				@cheat_window.active = false
+				@cheat_window.visible = false
+				@tp_window.active = true
+				@tp_window.visible = true
+				@tp_window.refresh
+			when 5
+				$scene = Scene_File.new(true, false, false)
+			when 6
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	
+	def update_parameters
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @parameters_window.index
+			when 0
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@gold_window.active = true
+				@gold_window.visible = true
+				@gold_window.refresh
+			when 1
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@level_window.active = true
+				@level_window.visible = true
+				@level_window.refresh
+			when 2
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@mhp_window.active = true
+				@mhp_window.visible = true
+				@mhp_window.refresh
+			when 3
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@mmp_window.active = true
+				@mmp_window.visible = true
+				@mmp_window.refresh
+			when 4
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@atk_window.active = true
+				@atk_window.visible = true
+				@atk_window.refresh
+			when 5
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@def_window.active = true
+				@def_window.visible = true
+				@def_window.refresh
+			when 6
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@mat_window.active = true
+				@mat_window.visible = true
+				@mat_window.refresh
+			when 7
+				@parameters_window.active = false
+				@parameters_window.visible = false
+				@agi_window.active = true
+				@agi_window.visible = true
+				@agi_window.refresh
+			when 8
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def iterate_actor_id(param)
+		if param == 0
+			$game_party.members.each {|actor| yield actor }
+		else
+				actor = $game_actors[param]
+			yield actor if actor
+		end
+	end
+	
+	def iterate_actor_var(param1, param2)
+		if param1 == 0
+					iterate_actor_id(param2) {|actor| yield actor }
+		else
+					iterate_actor_id($game_variables[param2]) {|actor| yield actor }
+		end
+	end
+
+	def update_level
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @level_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(1, false)
+		end
+		$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(10, false)
+		end
+		$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(20, false)
+		end
+		$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(30, false)
+		end
+		$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(40, false)
+		end
+		$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(50, false)
+		end
+		$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(60, false)
+		end
+		$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(70, false)
+		end
+		$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(80, false)
+		end
+		$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+					actor.change_level(90, false)
+		end
+		$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.change_level(99, false)
+		end
+		$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.change_level(999, false)
+		end
+		$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+
+	def update_gold
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @gold_window.index
+			when 0
+		$game_party.gain_gold(1000)
+				$scene = Scene_Map.new
+			when 1
+				$game_party.gain_gold(5000)
+				$scene = Scene_Map.new
+			when 2
+				$game_party.gain_gold(10000)
+				$scene = Scene_Map.new
+			when 3
+				$game_party.gain_gold(50000)
+				$scene = Scene_Map.new
+			when 4
+				$game_party.gain_gold(100000)
+				$scene = Scene_Map.new
+			when 5
+				$game_party.gain_gold(500000)
+				$scene = Scene_Map.new
+			when 6
+				$game_party.gain_gold(1000000)
+				$scene = Scene_Map.new
+			when 7
+				$game_party.gain_gold(5000000)
+				$scene = Scene_Map.new
+			when 8
+				$game_party.gain_gold(10000000)
+				$scene = Scene_Map.new
+			when 9
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_mhp
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @mhp_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += 500
+		end
+				$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += 1000
+		end
+				$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += 5000
+		end
+				$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += 10000
+		end
+				$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += 50000
+		end
+				$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += 100000
+		end
+				$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += -500
+		end
+				$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += -1000
+		end
+				$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += -5000
+		end
+				$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += -10000
+		end
+				$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += -50000
+		end
+				$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxhp += -100000
+		end
+				$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_mmp
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @mmp_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += 500
+		end
+				$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += 1000
+		end
+				$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += 5000
+		end
+				$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += 10000
+		end
+				$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += 50000
+		end
+				$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += 100000
+		end
+				$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += -500
+		end
+				$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += -1000
+		end
+				$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += -5000
+		end
+				$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += -10000
+		end
+				$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += -50000
+		end
+				$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.maxmp += -100000
+		end
+				$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_atk
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @atk_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += 500
+		end
+				$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += 1000
+		end
+				$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += 5000
+		end
+				$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += 10000
+		end
+				$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += 50000
+		end
+				$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += 100000
+		end
+				$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += -500
+		end
+				$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += -1000
+		end
+				$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += -5000
+		end
+				$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += -10000
+		end
+				$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += -50000
+		end
+				$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.atk += -100000
+		end
+				$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_def
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @def_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += 500
+		end
+				$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += 1000
+		end
+				$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += 5000
+		end
+				$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += 10000
+		end
+				$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += 50000
+		end
+				$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += 100000
+		end
+				$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += -500
+		end
+				$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += -1000
+		end
+				$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += -5000
+		end
+				$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += -10000
+		end
+				$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += -50000
+		end
+				$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.def += -100000
+		end
+				$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_mat
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @mat_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += 500
+		end
+				$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += 1000
+		end
+				$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += 5000
+		end
+				$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += 10000
+		end
+				$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += 50000
+		end
+				$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += 100000
+		end
+				$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += -500
+		end
+				$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += -1000
+		end
+				$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += -5000
+		end
+				$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += -10000
+		end
+				$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += -50000
+		end
+				$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.spi += -100000
+		end
+				$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_agi
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @agi_window.index
+			when 0
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += 500
+		end
+				$scene = Scene_Map.new
+			when 1
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += 1000
+		end
+				$scene = Scene_Map.new
+			when 2
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += 5000
+		end
+				$scene = Scene_Map.new
+			when 3
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += 10000
+		end
+				$scene = Scene_Map.new
+			when 4
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += 50000
+		end
+				$scene = Scene_Map.new
+			when 5
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += 100000
+		end
+				$scene = Scene_Map.new
+			when 6
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += -500
+		end
+				$scene = Scene_Map.new
+			when 7
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += -1000
+		end
+				$scene = Scene_Map.new
+			when 8
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += -5000
+		end
+				$scene = Scene_Map.new
+			when 9
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += -10000
+		end
+				$scene = Scene_Map.new
+			when 10
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += -50000
+		end
+				$scene = Scene_Map.new
+			when 11
+				iterate_actor_var(0, 0) do |actor|
+				actor.agi += -100000
+		end
+				$scene = Scene_Map.new
+			when 12
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_tp
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @tp_window.index
+			when 0
+				pos_1_file = "tele/pos_1.neko"
+				File.open(pos_1_file, "w") { |f| f.write $game_map.map_id.to_s + ", " + $game_player.x.to_s + ", " + $game_player.y.to_s}
+				$scene = Scene_Map.new
+			when 1
+				read_pos_1 = File.read("tele/pos_1.neko").split
+				pos_1_map = read_pos_1[0]
+				pos_1_x = read_pos_1[1]
+				pos_1_y = read_pos_1[2]
+				$game_player.reserve_transfer(pos_1_map.to_i, pos_1_x.to_i, pos_1_y.to_i, 0)
+				$scene = Scene_Map.new
+			when 2
+				pos_2_file = "tele/pos_2.neko"
+				File.open(pos_2_file, "w") { |f| f.write $game_map.map_id.to_s + ", " + $game_player.x.to_s + ", " + $game_player.y.to_s}
+				$scene = Scene_Map.new
+			when 3
+				read_pos_2 = File.read("tele/pos_2.neko").split
+				pos_2_map = read_pos_2[0]
+				pos_2_x = read_pos_2[1]
+				pos_2_y = read_pos_2[2]
+				$game_player.reserve_transfer(pos_2_map.to_i, pos_2_x.to_i, pos_2_y.to_i, 0)
+				$scene = Scene_Map.new
+			when 4
+				pos_3_file = "tele/pos_3.neko"
+				File.open(pos_3_file, "w") { |f| f.write $game_map.map_id.to_s + ", " + $game_player.x.to_s + ", " + $game_player.y.to_s}
+				$scene = Scene_Map.new
+			when 5
+				read_pos_3 = File.read("tele/pos_2.neko").split
+				pos_3_map = read_pos_3[0]
+				pos_3_x = read_pos_3[1]
+				pos_3_y = read_pos_3[2]
+				$game_player.reserve_transfer(pos_3_map.to_i, pos_3_x.to_i, pos_3_y.to_i, 0)
+				$scene = Scene_Map.new
+			when 6
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+
+	def update_item
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			@item = @item_window.item
+			if @item == nil
+				return
+			end
+			number = $game_party.item_number(@item)
+			max = 99
+			max = [max, 99 - number].min
+			@item_window.active = false
+			@item_window.visible = false
+			@number_window.set(@item, max, @item.price)
+			@number_window.active = true
+			@number_window.visible = true
+		end
+	end
+
+	def update_number
+		if Input.trigger?(Input::B)
+			@number_window.active = false
+			@number_window.visible = false
+			@item_window.active = true
+			@item_window.visible = true
+			return
+		end
+		if Input.trigger?(Input::C)
+			@number_window.active = false
+			@number_window.visible = false
+			$game_party.gain_item(@item, @number_window.number)
+			
+			@item_window.refresh
+			@item_window.active = true
+			@item_window.visible = true
+			return
+		end
+	end
+end
+
+class Window_GetItemNumber < Window_Base
+	def initialize(x, y)
+		super(x, y, 304, 120)
+		@item = nil
+		@max = 1
+		@price = 0
+		@number = 1
+	end
+	def set(item, max, price)
+		@item = item
+		@max = max
+		@price = 0
+		@number = 1
+		refresh
+	end
+	def number
+		return @number
+	end
+	def refresh
+		y = 0
+		self.contents.clear
+		draw_item_name(@item, 0, y)
+		self.contents.font.color = normal_color
+		self.contents.draw_text(212, y, 20, WLH, "×")
+		self.contents.draw_text(248, y, 20, WLH, @number, 2)
+		self.cursor_rect.set(244, y, 28, WLH)
+		draw_currency_value(@price * @number, 4, y + WLH * 2, 264)
+	end
+	def update
+		super
+		if self.active
+			last_number = @number
+			if Input.repeat?(Input::RIGHT) and @number < @max
+				@number += 1
+			end
+			if Input.repeat?(Input::LEFT) and @number > 1
+				@number -= 1
+			end
+			if Input.repeat?(Input::UP) and @number < @max
+				@number = [@number + 10, @max].min
+			end
+			if Input.repeat?(Input::DOWN) and @number > 1
+				@number = [@number - 10, 1].max
+			end
+			if @number != last_number
+				Sound.play_cursor
+				refresh
+			end
+		end
+	end
+end
+
+class Window_GetItem < Window_Selectable
+	def initialize
+		super(0, 0, 280, 304)
+		@shop_goods = []
+		@shop_goods += $data_items
+		@shop_goods += $data_weapons
+		@shop_goods += $data_armors
+		refresh
+		self.index = 0
+	end
+	def set(type)
+		if type == 0
+			@shop_goods -= $data_weapons
+			@shop_goods -= $data_armors
+		end
+		if type == 1
+			@shop_goods -= $data_items
+			@shop_goods -= $data_armors
+		end
+		if type == 2
+			@shop_goods -= $data_items
+			@shop_goods -= $data_weapons
+		end
+	end
+	def item
+		return @data[self.index]
+		end
+	def refresh
+		if self.contents != nil
+			self.contents.dispose
+			self.contents = nil
+		end
+		@data = []
+		for item in @shop_goods
+			if item != nil && item.name != ""
+				@data.push(item)
+			end
+		end
+		@item_max = @data.size
+		if @item_max > 0
+			self.contents = Bitmap.new(width - 32, row_max * 32)
+			for i in 0...@item_max
+				draw_item(i)
+			end
+		end
+	end
+	def draw_item(index)
+		item = @data[index]
+		self.contents.font.color = normal_color
+		
+		x = 4
+		y = index * WLH
+		rect = Rect.new(x, y, self.width - 32, WLH)
+		self.contents.fill_rect(rect, Color.new(0, 0, 0, 0))
+		opacity = self.contents.font.color == normal_color ? 255 : 128
+		self.contents.draw_text(x + 4, y, 212, WLH, item.name, 0)
+		self.contents.draw_text(x + 220, y, 88,WLH, item.price.to_s, 2)
+	end
+end
+	
+class Game_Player
+	alias :cheat_update :update
+	def update
+		cheat_update
+		if Input.press?(Input::F8)
+			$scene = Scene_Cheat.new
+		end
+	if Input.press?(Input::F9) && !$game_player.moving? && !$TEST
+			$scene = Scene_Debug.new
+		end
+	def debug_through?
+			if Input.press?(Input::CTRL)
+				return true 
+			end
+			if $TEST && Input.press?(:CTRL)
+				return true 
+			end
+			return false
+		end
+	end
+end

@@ -9,7 +9,7 @@ Bug report are more than welcomed (dm @hifumi_chan on discord for faster respons
 - Suicide item, Insta-kill all enemies (item) (these item only work if the game battle are turn based, otherwise with example like nobihazard it won't work)
 - Teleport (save and load up to 3 position, you can also teleport to other location by edit and load an position file inside tele folder)
 - Stats (parameters) edit (Change Gold, Level as well as Max HP, Max MP,...)
-- Debug mode enable by default
+- Debug mode enabled by default
 - A save button from cheat menu for game with disabled save function on game menu
 ## How to use
 - Clone this repository

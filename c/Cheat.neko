@@ -1,6 +1,24 @@
+GetPrivateProfileString   = Win32API.new('kernel32', 'GetPrivateProfileString'  , 'ppppip'      , 'i')
+WritePrivateProfileString = Win32API.new('kernel32', 'WritePrivateProfileString', 'pppp'        , 'i')
+save_location = './Game_Cheat.ini'
+section       = 'Cheat_cfg'
+
 class Scene_Cheat
+	#GetPrivateProfileString   = Win32API.new('kernel32', 'GetPrivateProfileString'  , 'ppppip'      , 'i')
+	save_location = './Game_Cheat.ini'
+	section       = 'Cheat_cfg'
+	def load_cheat
+		buffer = [].pack('x256')
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_debug = get_option.call('Debug',  '0').to_i
+		@c_exp   = get_option.call('Exp',    '1').to_i
+	end
+	
 	def main
-		@cheat_window = Window_Command.new(180,["Get Items", "Get Weapons", "Get Armors", "Edit Parameters", "Teleport","Save","Cancel"])
+		@cheat_window = Window_Command.new(180,["Get Items", "Get Weapons", "Get Armors", "Edit Parameters", "Teleport" ,"Save", "Config" ,"Cancel"])
 		@cheat_window.active = true
 		@cheat_window.visible = true
 
@@ -15,34 +33,48 @@ class Scene_Cheat
 		@level_window = Window_Command.new(100,["Lv 1", "Lv 10", "Lv 20","Lv 30","Lv 40","Lv 50","Lv 60","Lv 70","Lv 80","Lv 90","Lv 99","Lv 999","Cancel"])
 		@level_window.active = false
 		@level_window.visible = false
+		
+		parameters_opt = ["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"]
 
-		@mhp_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@mhp_window = Window_Command.new(120,parameters_opt)
 		@mhp_window.active = false
 		@mhp_window.visible = false
 
-		@mmp_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@mmp_window = Window_Command.new(120,parameters_opt)
 		@mmp_window.active = false
 		@mmp_window.visible = false
 
-		@atk_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@atk_window = Window_Command.new(120,parameters_opt)
 		@atk_window.active = false
 		@atk_window.visible = false
 
-		@def_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@def_window = Window_Command.new(120,parameters_opt)
 		@def_window.active = false
 		@def_window.visible = false
 
-		@mat_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@mat_window = Window_Command.new(120,parameters_opt)
 		@mat_window.active = false
 		@mat_window.visible = false
 
-		@agi_window = Window_Command.new(120,["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"])
+		@agi_window = Window_Command.new(120,parameters_opt)
 		@agi_window.active = false
 		@agi_window.visible = false
 
 		@tp_window = Window_Command.new(160,["Save Pos 1", "Load Pos 1", "Save Pos 2","Load Pos 2","Save Pos 3","Load Pos 3","Cancel"])
 		@tp_window.active = false
 		@tp_window.visible = false
+
+		@cfg_window = Window_Command.new(160,["Debug Mode", "EXP drop rate","Cancel"])
+		@cfg_window.active = false
+		@cfg_window.visible = false
+		
+		@c_debug_window = Window_Command.new(160,["On", "Off (base)", "Cancel"])
+		@c_debug_window.active = false
+		@c_debug_window.visible = false
+		
+		@c_exp_window = Window_Command.new(160,["1x (base)", "5x", "10x", "15x", "20x", "25x", "Cancel"])
+		@c_exp_window.active = false
+		@c_exp_window.visible = false
 
 		@item_window = Window_GetItem.new
 		@item_window.active = false
@@ -73,6 +105,9 @@ class Scene_Cheat
 		@mat_window.dispose
 		@agi_window.dispose
 		@tp_window.dispose
+		@cfg_window.dispose
+		@c_debug_window.dispose
+		@c_exp_window.dispose
 		@item_window.dispose
 		@number_window.dispose
 		end
@@ -88,6 +123,9 @@ class Scene_Cheat
 		@def_window.update
 		@mat_window.update
 		@agi_window.update
+		@cfg_window.update
+		@c_debug_window.update
+		@c_exp_window.update
 		@tp_window.update
 		@item_window.update
 		@number_window.update
@@ -133,6 +171,18 @@ class Scene_Cheat
 		end
 		if @tp_window.active
 			update_tp
+			return
+		end
+		if @cfg_window.active
+			update_cfg
+			return
+		end
+		if @c_debug_window.active
+			update_c_debug
+			return
+		end
+		if @c_exp_window.active
+			update_exp
 			return
 		end
 		if @item_window.active
@@ -188,12 +238,17 @@ class Scene_Cheat
 			when 5
 				$scene = Scene_File.new(true, false, false)
 			when 6
+				@cheat_window.active = false
+				@cheat_window.visible = false
+				@cfg_window.active = true
+				@cfg_window.visible = true
+				@cfg_window.refresh
+			when 7
 				$scene = Scene_Map.new
 			end
 			return
 		end
 	end
-	
 	
 	def update_parameters
 		if Input.trigger?(Input::B)
@@ -257,20 +312,46 @@ class Scene_Cheat
 		end
 	end
 	
+	def update_cfg
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @cfg_window.index
+			when 0
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@c_debug_window.active = true
+				@c_debug_window.visible = true
+				@c_debug_window.refresh
+			when 1
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@c_exp_window.active = true
+				@c_exp_window.visible = true
+				@c_exp_window.refresh
+			when 2
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
 	def iterate_actor_id(param)
 		if param == 0
 			$game_party.members.each {|actor| yield actor }
 		else
-				actor = $game_actors[param]
+			actor = $game_actors[param]
 			yield actor if actor
 		end
 	end
 	
 	def iterate_actor_var(param1, param2)
 		if param1 == 0
-					iterate_actor_id(param2) {|actor| yield actor }
+			iterate_actor_id(param2) {|actor| yield actor }
 		else
-					iterate_actor_id($game_variables[param2]) {|actor| yield actor }
+			iterate_actor_id($game_variables[param2]) {|actor| yield actor }
 		end
 	end
 
@@ -284,63 +365,63 @@ class Scene_Cheat
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(1, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(10, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(20, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(30, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(40, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(50, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(60, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(70, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(80, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 					actor.change_level(90, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.change_level(99, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.change_level(999, false)
-		end
-		$scene = Scene_Map.new
+				end
+				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
 			end
@@ -393,72 +474,72 @@ class Scene_Cheat
 		if Input.trigger?(Input::B)
 			$scene = Scene_Map.new
 			return
-		end
+				end
 		if Input.trigger?(Input::C)
 			case @mhp_window.index
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += 500
-		end
+				end
 				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += 1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += 5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += 10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += 50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += 100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += -500
-		end
+				end
 				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += -1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += -5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += -10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += -50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxhp += -100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
-			end
+				end
 			return
 		end
 	end
@@ -467,72 +548,72 @@ class Scene_Cheat
 		if Input.trigger?(Input::B)
 			$scene = Scene_Map.new
 			return
-		end
+				end
 		if Input.trigger?(Input::C)
 			case @mmp_window.index
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += 500
-		end
+				end
 				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += 1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += 5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += 10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += 50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += 100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -500
-		end
+				end
 				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
-			end
+				end
 			return
 		end
 	end
@@ -547,66 +628,66 @@ class Scene_Cheat
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += 500
-		end
+				end
 				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += 1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += 5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += 10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += 50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += 100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += -500
-		end
+				end
 				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += -1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += -5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += -10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += -50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.atk += -100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
-			end
+				end
 			return
 		end
 	end
@@ -621,62 +702,62 @@ class Scene_Cheat
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += 500
-		end
+				end
 				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += 1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += 5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += 10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += 50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += 100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -500
-		end
+				end
 				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
@@ -695,62 +776,62 @@ class Scene_Cheat
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += 500
-		end
+				end
 				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += 1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += 5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += 10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += 50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += 100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += -500
-		end
+				end
 				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += -1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += -5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += -10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += -50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.spi += -100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
@@ -769,62 +850,62 @@ class Scene_Cheat
 			when 0
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += 500
-		end
+				end
 				$scene = Scene_Map.new
 			when 1
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += 1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 2
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += 5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 3
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += 10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 4
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += 50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 5
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += 100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 6
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += -500
-		end
+				end
 				$scene = Scene_Map.new
 			when 7
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += -1000
-		end
+				end
 				$scene = Scene_Map.new
 			when 8
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += -5000
-		end
+				end
 				$scene = Scene_Map.new
 			when 9
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += -10000
-		end
+				end
 				$scene = Scene_Map.new
 			when 10
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += -50000
-		end
+				end
 				$scene = Scene_Map.new
 			when 11
 				iterate_actor_var(0, 0) do |actor|
 				actor.agi += -100000
-		end
+				end
 				$scene = Scene_Map.new
 			when 12
 				$scene = Scene_Map.new
@@ -874,6 +955,71 @@ class Scene_Cheat
 				$game_player.reserve_transfer(pos_3_map.to_i, pos_3_x.to_i, pos_3_y.to_i, 0)
 				$scene = Scene_Map.new
 			when 6
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_c_debug
+	save_location = './Game_Cheat.ini'
+	section       = 'Cheat_cfg'
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @c_debug_window.index
+			when 0
+				@c_debug = 1
+				WritePrivateProfileString.call(section, 'Debug', @c_debug.to_s, save_location)
+				$scene = Scene_Map.new
+			when 1
+				@c_debug = 0
+				WritePrivateProfileString.call(section, 'Debug', @c_debug.to_s, save_location)
+				$scene = Scene_Map.new
+			when 2
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_exp
+	save_location = './Game_Cheat.ini'
+	section       = 'Cheat_cfg'
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @c_exp_window.index
+			when 0
+				@c_exp = 1
+				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
+				$scene = Scene_Map.new
+			when 1
+				@c_exp = 5
+				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
+				$scene = Scene_Map.new
+			when 2
+				@c_exp = 10
+				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
+				$scene = Scene_Map.new
+			when 3
+				@c_exp = 15
+				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
+				$scene = Scene_Map.new
+			when 4
+				@c_exp = 20
+				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
+				$scene = Scene_Map.new
+			when 5
+				@c_exp = 25
+				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
+				$scene = Scene_Map.new
+			when 6
+				@now_setting = false
 				$scene = Scene_Map.new
 			end
 			return
@@ -1033,20 +1179,69 @@ class Window_GetItem < Window_Selectable
 		self.contents.draw_text(x + 220, y, 88,WLH, item.price.to_s, 2)
 	end
 end
+
+class Game_Troop < Game_Unit
+	def exp_total
+		exp = 0
+		for enemy in dead_members
+			exp += enemy.exp unless enemy.hidden
+		end
+		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
+		
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_exp   = get_option.call('Exp', '0').to_i
+		@c_debug = get_option.call('Debug',  '0').to_i
+		
+		if @c_exp == 0
+			return exp * 1
+		else
+			return exp * @c_exp
+		end
+	end
+end
 	
 class Game_Player
 	alias :cheat_update :update
 	def update
 		cheat_update
+		
+			buffer = [].pack('x256')
+			save_location = './Game_Cheat.ini'
+			section       = 'Cheat_cfg'
+			
+			get_option = Proc.new do |key, default_value|
+				l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+				buffer[0, l]
+			end
+			@c_debug = get_option.call('Debug',  '0').to_i
+			@c_exp   = get_option.call('Exp',    '0').to_i
+			
 		if Input.press?(Input::F8)
 			$scene = Scene_Cheat.new
 		end
-	if Input.press?(Input::F9) && !$game_player.moving? && !$TEST
+		if Input.press?(Input::F9) && @c_debug == 1 && !$game_player.moving? && !$TEST
 			$scene = Scene_Debug.new
 		end
-	def debug_through?
-			if Input.press?(Input::CTRL)
-				return true 
+		
+		def debug_through?
+			buffer = [].pack('x256')
+			save_location = './Game_Cheat.ini'
+			section       = 'Cheat_cfg'
+			
+			get_option = Proc.new do |key, default_value|
+				l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+				buffer[0, l]
+			end
+			@c_debug = get_option.call('Debug',  '0').to_i
+			@c_exp   = get_option.call('Exp',    '0').to_i
+			
+			if Input.press?(Input::CTRL) && @c_debug == 1
+				return true
 			end
 			if $TEST && Input.press?(:CTRL)
 				return true 

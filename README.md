@@ -1,4 +1,4 @@
-# RPGM VX Ace cheat
+# RPGM VX cheat
 Bug report are more than welcomed (dm @hifumi_chan on discord for faster response)
 ## Credits
 - Me

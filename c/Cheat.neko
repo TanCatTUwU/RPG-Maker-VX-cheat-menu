@@ -1,40 +1,44 @@
 GetPrivateProfileString   = Win32API.new('kernel32', 'GetPrivateProfileString'  , 'ppppip'      , 'i')
 WritePrivateProfileString = Win32API.new('kernel32', 'WritePrivateProfileString', 'pppp'        , 'i')
-save_location = './Game_Cheat.ini'
-section       = 'Cheat_cfg'
 
 class Scene_Cheat
 	#GetPrivateProfileString   = Win32API.new('kernel32', 'GetPrivateProfileString'  , 'ppppip'      , 'i')
-	save_location = './Game_Cheat.ini'
-	section       = 'Cheat_cfg'
 	def load_cheat
 		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
 		get_option = Proc.new do |key, default_value|
 			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
 			buffer[0, l]
 		end
-		@c_debug = get_option.call('Debug',  '0').to_i
-		@c_exp   = get_option.call('Exp',    '1').to_i
+		@c_debug          = get_option.call('Debug'       ,     '0').to_i
+		@c_exp            = get_option.call('Exp'         ,     '1').to_i
+		@c_re             = get_option.call('Random_Event',     '0').to_i
+		@c_text_speed     = get_option.call('Text_Speed'  ,     '0').to_i
+		@c_bgm            = get_option.call('BGM'         ,     '0').to_i
+		@c_bgs            = get_option.call('BGS'         ,     '0').to_i
+		@c_me             = get_option.call('ME'          ,     '0').to_i
+		@c_se             = get_option.call('SE'          ,     '0').to_i
 	end
 	
 	def main
-		@cheat_window = Window_Command.new(180,["Get Items", "Get Weapons", "Get Armors", "Edit Parameters", "Teleport" ,"Save", "Config" ,"Cancel"])
+		@cheat_window = Window_Command.new(180,["Get Items", "Get Weapons", "Get Armors", "Edit Parameters", "Teleport", "Save", "Config"])
 		@cheat_window.active = true
 		@cheat_window.visible = true
 
-		@parameters_window = Window_Command.new(120,["Gold", "Level", "MHP","MMP","ATK","DEF","MAT","AGI","Cancel"])
+		@parameters_window = Window_Command.new(120,["Gold", "Level", "MHP", "MMP", "ATK", "DEF", "MAT", "AGI"])
 		@parameters_window.active = false
 		@parameters_window.visible = false
 
-		@gold_window = Window_Command.new(100,["+1K G", "5K G", "10K G","50K G","100K G","500K G","1M G","5M G","10M G","Cancel"])
+		@gold_window = Window_Command.new(100,["+1K G", "5K G", "10K G", "50K G", "100K G", "500K G", "1M G", "5M G", "10M G"])
 		@gold_window.active = false
 		@gold_window.visible = false
 
-		@level_window = Window_Command.new(100,["Lv 1", "Lv 10", "Lv 20","Lv 30","Lv 40","Lv 50","Lv 60","Lv 70","Lv 80","Lv 90","Lv 99","Lv 999","Cancel"])
+		@level_window = Window_Command.new(100,["Lv 1", "Lv 10", "Lv 20", "Lv 30", "Lv 40", "Lv 50", "Lv 60", "Lv 70", "Lv 80", "Lv 90", "Lv 99", "Lv 999"])
 		@level_window.active = false
 		@level_window.visible = false
 		
-		parameters_opt = ["+500", "+1000", "+5000","+10000","+50000","+100000","-500","-1000","-5000","-10000","-50000","-100000","Cancel"]
+		parameters_opt = ["+500", "+1000", "+5000", "+10000", "+50000", "+100000", "-500", "-1000", "-5000", "-10000", "-50000", "-100000"]
 
 		@mhp_window = Window_Command.new(120,parameters_opt)
 		@mhp_window.active = false
@@ -60,21 +64,34 @@ class Scene_Cheat
 		@agi_window.active = false
 		@agi_window.visible = false
 
-		@tp_window = Window_Command.new(160,["Save Pos 1", "Load Pos 1", "Save Pos 2","Load Pos 2","Save Pos 3","Load Pos 3","Cancel"])
+		@tp_window = Window_Command.new(160,["Save Pos 1", "Load Pos 1", "Save Pos 2", "Load Pos 2", "Save Pos 3", "Load Pos 3"])
 		@tp_window.active = false
 		@tp_window.visible = false
 
-		@cfg_window = Window_Command.new(160,["Debug Mode", "EXP drop rate","Cancel"])
+		@cfg_window = Window_Command.new(160,["Random Event", "Text Speed", "Debug Mode", "EXP drop rate", "BGM", "BGS", "ME", "SE", "Screen size", "Fullscreen"])
 		@cfg_window.active = false
 		@cfg_window.visible = false
 		
-		@c_debug_window = Window_Command.new(160,["On", "Off (base)", "Cancel"])
+		@c_re_window = Window_Command.new(160,["On (base)", "Off"])
+		@c_re_window.active = false
+		@c_re_window.visible = false
+		
+		@c_ts_window = Window_Command.new(160,["On", "Off (base)"])
+		@c_ts_window.active = false
+		@c_ts_window.visible = false
+		
+		@c_debug_window = Window_Command.new(160,["On", "Off (base)"])
 		@c_debug_window.active = false
 		@c_debug_window.visible = false
 		
-		@c_exp_window = Window_Command.new(160,["1x (base)", "5x", "10x", "15x", "20x", "25x", "Cancel"])
+		@c_exp_window = Window_Command.new(160,["1x (base)", "5x", "10x", "15x", "20x", "25x"])
 		@c_exp_window.active = false
 		@c_exp_window.visible = false
+		
+		@volume_window = Window_Command.new(160,["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", "Default"])
+		@volume_window.active = false
+		@volume_window.visible = false
+		@volume_type = false
 
 		@item_window = Window_GetItem.new
 		@item_window.active = false
@@ -106,8 +123,11 @@ class Scene_Cheat
 		@agi_window.dispose
 		@tp_window.dispose
 		@cfg_window.dispose
+		@c_ts_window.dispose
+		@c_re_window.dispose
 		@c_debug_window.dispose
 		@c_exp_window.dispose
+		@volume_window.dispose
 		@item_window.dispose
 		@number_window.dispose
 		end
@@ -124,8 +144,11 @@ class Scene_Cheat
 		@mat_window.update
 		@agi_window.update
 		@cfg_window.update
+		@c_ts_window.update
+		@c_re_window.update
 		@c_debug_window.update
 		@c_exp_window.update
+		@volume_window.update
 		@tp_window.update
 		@item_window.update
 		@number_window.update
@@ -177,12 +200,24 @@ class Scene_Cheat
 			update_cfg
 			return
 		end
+		if @c_re_window.active
+			update_c_re
+			return
+		end
+		if @c_ts_window.active
+			update_c_ts
+			return
+		end
 		if @c_debug_window.active
 			update_c_debug
 			return
 		end
 		if @c_exp_window.active
 			update_exp
+			return
+		end
+		if @volume_window.active
+			update_volume
 			return
 		end
 		if @item_window.active
@@ -243,8 +278,6 @@ class Scene_Cheat
 				@cfg_window.active = true
 				@cfg_window.visible = true
 				@cfg_window.refresh
-			when 7
-				$scene = Scene_Map.new
 			end
 			return
 		end
@@ -305,8 +338,6 @@ class Scene_Cheat
 				@agi_window.active = true
 				@agi_window.visible = true
 				@agi_window.refresh
-			when 8
-				$scene = Scene_Map.new
 			end
 			return
 		end
@@ -322,17 +353,65 @@ class Scene_Cheat
 			when 0
 				@cfg_window.active = false
 				@cfg_window.visible = false
+				@c_re_window.active = true
+				@c_re_window.visible = true
+				@c_re_window.refresh
+			when 1
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@c_ts_window.active = true
+				@c_ts_window.visible = true
+				@c_ts_window.refresh
+			when 2
+				@cfg_window.active = false
+				@cfg_window.visible = false
 				@c_debug_window.active = true
 				@c_debug_window.visible = true
 				@c_debug_window.refresh
-			when 1
+			when 3
 				@cfg_window.active = false
 				@cfg_window.visible = false
 				@c_exp_window.active = true
 				@c_exp_window.visible = true
 				@c_exp_window.refresh
-			when 2
-				$scene = Scene_Map.new
+			when 4
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@volume_type = 'BGM'
+				@volume_window.active = true
+				@volume_window.visible = true
+				@volume_window.refresh
+			when 5
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@volume_type = 'BGS'
+				@volume_window.active = true
+				@volume_window.visible = true
+				@volume_window.refresh
+			when 6
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@volume_type = 'ME'
+				@volume_window.active = true
+				@volume_window.visible = true
+				@volume_window.refresh
+			when 7
+				@cfg_window.active = false
+				@cfg_window.visible = false
+				@volume_type = 'SE'
+				@volume_window.active = true
+				@volume_window.visible = true
+				@volume_window.refresh
+			when 8
+				Graphics.toggle_ratio
+				@cfg_window.active = true
+				@cfg_window.visible = true
+				@cfg_window.refresh
+			when 9
+				Graphics.toggle_fullscreen
+				@cfg_window.active = true
+				@cfg_window.visible = true
+				@cfg_window.refresh
 			end
 			return
 		end
@@ -422,8 +501,6 @@ class Scene_Cheat
 				actor.change_level(999, false)
 				end
 				$scene = Scene_Map.new
-			when 12
-				$scene = Scene_Map.new
 			end
 			return
 		end
@@ -462,8 +539,6 @@ class Scene_Cheat
 				$scene = Scene_Map.new
 			when 8
 				$game_party.gain_gold(10000000)
-				$scene = Scene_Map.new
-			when 9
 				$scene = Scene_Map.new
 			end
 			return
@@ -537,8 +612,6 @@ class Scene_Cheat
 				actor.maxhp += -100000
 				end
 				$scene = Scene_Map.new
-			when 12
-				$scene = Scene_Map.new
 				end
 			return
 		end
@@ -610,8 +683,6 @@ class Scene_Cheat
 				iterate_actor_var(0, 0) do |actor|
 				actor.maxmp += -100000
 				end
-				$scene = Scene_Map.new
-			when 12
 				$scene = Scene_Map.new
 				end
 			return
@@ -685,8 +756,6 @@ class Scene_Cheat
 				actor.atk += -100000
 				end
 				$scene = Scene_Map.new
-			when 12
-				$scene = Scene_Map.new
 				end
 			return
 		end
@@ -758,8 +827,6 @@ class Scene_Cheat
 				iterate_actor_var(0, 0) do |actor|
 				actor.def += -100000
 				end
-				$scene = Scene_Map.new
-			when 12
 				$scene = Scene_Map.new
 			end
 			return
@@ -833,8 +900,6 @@ class Scene_Cheat
 				actor.spi += -100000
 				end
 				$scene = Scene_Map.new
-			when 12
-				$scene = Scene_Map.new
 			end
 			return
 		end
@@ -907,8 +972,6 @@ class Scene_Cheat
 				actor.agi += -100000
 				end
 				$scene = Scene_Map.new
-			when 12
-				$scene = Scene_Map.new
 			end
 			return
 		end
@@ -954,7 +1017,49 @@ class Scene_Cheat
 				pos_3_y = read_pos_3[2]
 				$game_player.reserve_transfer(pos_3_map.to_i, pos_3_x.to_i, pos_3_y.to_i, 0)
 				$scene = Scene_Map.new
-			when 6
+			end
+			return
+		end
+	end
+	
+	def update_c_re
+	save_location = './Game_Cheat.ini'
+	section       = 'Cheat_cfg'
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @c_re_window.index
+			when 0
+				@c_re = 0
+				WritePrivateProfileString.call(section, 'Random_Event', @c_re.to_s, save_location)
+				$scene = Scene_Map.new
+			when 1
+				@c_re = 1
+				WritePrivateProfileString.call(section, 'Random_Event', @c_re.to_s, save_location)
+				$scene = Scene_Map.new
+			end
+			return
+		end
+	end
+	
+	def update_c_ts
+	save_location = './Game_Cheat.ini'
+	section       = 'Cheat_cfg'
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @c_ts_window.index
+			when 0
+				@c_ts = 0
+				WritePrivateProfileString.call(section, 'Text_Speed', @c_ts.to_s, save_location)
+				$scene = Scene_Map.new
+			when 1
+				@c_ts = 1
+				WritePrivateProfileString.call(section, 'Text_Speed', @c_ts.to_s, save_location)
 				$scene = Scene_Map.new
 			end
 			return
@@ -977,8 +1082,6 @@ class Scene_Cheat
 			when 1
 				@c_debug = 0
 				WritePrivateProfileString.call(section, 'Debug', @c_debug.to_s, save_location)
-				$scene = Scene_Map.new
-			when 2
 				$scene = Scene_Map.new
 			end
 			return
@@ -1018,9 +1121,156 @@ class Scene_Cheat
 				@c_exp = 25
 				WritePrivateProfileString.call(section, 'Exp', @c_exp.to_s, save_location)
 				$scene = Scene_Map.new
-			when 6
-				@now_setting = false
+			end
+			return
+		end
+	end
+	
+	def update_volume
+	save_location = './Game_Cheat.ini'
+	section       = 'Cheat_cfg'
+	if @volume_type == false
+		print("volume_type not defined")
+		$scene = Scene_Map.new
+	end
+		if Input.trigger?(Input::B)
+			$scene = Scene_Map.new
+			return
+		end
+		if Input.trigger?(Input::C)
+			case @volume_window.index
+			when 0
+				@volume_value = 0
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
 				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 1
+				@volume_value = 10
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 2
+				@volume_value = 20
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 3
+				@volume_value = 30
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 4
+				@volume_value = 40
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 5
+				@volume_value = 50
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 6
+				@volume_value = 60
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 7
+				@volume_value = 70
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 8
+				@volume_value = 80
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 9
+				@volume_value = 90
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 10
+				@volume_value = 100
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
+			when 11
+				@volume_value = -1
+				WritePrivateProfileString.call(section, @volume_type, @volume_value.to_s, save_location)
+				@volume_type = false
+				$game_temp.map_bgm = RPG::BGM.last
+				$game_temp.map_bgs = RPG::BGS.last
+				RPG::BGM.stop
+                RPG::BGS.stop
+				$scene = Scene_Map.new
+				$game_temp.map_bgm.play
+				$game_temp.map_bgs.play
 			end
 			return
 		end
@@ -1180,6 +1430,46 @@ class Window_GetItem < Window_Selectable
 	end
 end
 
+class Game_Player < Game_Character
+	def update_encounter
+		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
+		
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_re   = get_option.call('Random_Event', '0').to_i
+		
+		if @c_re == 1
+			return
+		end
+	end
+end
+
+class Window_Message < Window_Selectable
+	alias neko_text_speed start_choice
+	def start_choice
+		buffer = [].pack('x256')
+			save_location = './Game_Cheat.ini'
+			section       = 'Cheat_cfg'
+			
+			get_option = Proc.new do |key, default_value|
+				l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+				buffer[0, l]
+			end
+			@c_text_speed   = get_option.call('Text_Speed', '0').to_i
+			
+		if @c_text_speed == 1
+			@show_fast = true
+		end
+		self.active = true
+		self.index = 0
+		neko_text_speed
+	end
+end
+
 class Game_Troop < Game_Unit
 	def exp_total
 		exp = 0
@@ -1195,7 +1485,7 @@ class Game_Troop < Game_Unit
 			buffer[0, l]
 		end
 		@c_exp   = get_option.call('Exp', '0').to_i
-		@c_debug = get_option.call('Debug',  '0').to_i
+		@c_debug = get_option.call('Debug', '0').to_i
 		
 		if @c_exp == 0
 			return exp * 1
@@ -1204,6 +1494,275 @@ class Game_Troop < Game_Unit
 		end
 	end
 end
+
+class RPG::BGM < RPG::AudioFile
+	alias neko_play play
+	def play
+		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
+		
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_bgm   = get_option.call('BGM', '0').to_i
+		
+		if @c_bgm != -1
+			@volume = @c_bgm
+		end
+		neko_play
+	end
+end
+class RPG::BGS < RPG::AudioFile
+	alias neko_play play
+	def play
+		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
+		
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_bgs   = get_option.call('BGS', '0').to_i
+		
+		if @c_bgs != -1
+			@volume = @c_bgs
+		end
+		neko_play
+	end
+end
+class RPG::ME < RPG::AudioFile
+	alias neko_play play
+	def play
+		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
+		
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_me   = get_option.call('ME', '0').to_i
+		
+		if @c_me != -1
+			@volume = @c_me
+		end
+		neko_play
+	end
+end
+class RPG::SE < RPG::AudioFile
+	alias neko_play play
+	def play
+		buffer = [].pack('x256')
+		save_location = './Game_Cheat.ini'
+		section       = 'Cheat_cfg'
+		
+		get_option = Proc.new do |key, default_value|
+			l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
+			buffer[0, l]
+		end
+		@c_se   = get_option.call('SE', '0').to_i
+		
+		if @c_se != -1
+			@volume = @c_se
+		end
+		neko_play
+	end
+end
+
+# Fullscreen++ v2.2 for VX and VXace by Zeus81
+# Free for non commercial and commercial use
+# Licence : http://creativecommons.org/licenses/by-sa/3.0/
+# Contact : zeusex81@gmail.com
+# (fr) Manuel d'utilisation : http://pastebin.com/raw.php?i=1TQfMnVJ
+# (en) User Guide           : http://pastebin.com/raw.php?i=EgnWt9ur
+ 
+$imported ||= {}
+$imported[:Zeus_Fullscreen] = __FILE__
+
+class << Graphics
+  Disable_VX_Fullscreen = false
+ 
+  CreateWindowEx            = Win32API.new('user32'  , 'CreateWindowEx'           , 'ippiiiiiiiii', 'i')
+  GetClientRect             = Win32API.new('user32'  , 'GetClientRect'            , 'ip'          , 'i')
+  GetDC                     = Win32API.new('user32'  , 'GetDC'                    , 'i'           , 'i')
+  GetSystemMetrics          = Win32API.new('user32'  , 'GetSystemMetrics'         , 'i'           , 'i')
+  GetWindowRect             = Win32API.new('user32'  , 'GetWindowRect'            , 'ip'          , 'i')
+  FillRect                  = Win32API.new('user32'  , 'FillRect'                 , 'ipi'         , 'i')
+  FindWindow                = Win32API.new('user32'  , 'FindWindow'               , 'pp'          , 'i')
+  ReleaseDC                 = Win32API.new('user32'  , 'ReleaseDC'                , 'ii'          , 'i')
+  SendInput                 = Win32API.new('user32'  , 'SendInput'                , 'ipi'         , 'i')
+  SetWindowLong             = Win32API.new('user32'  , 'SetWindowLong'            , 'iii'         , 'i')
+  SetWindowPos              = Win32API.new('user32'  , 'SetWindowPos'             , 'iiiiiii'     , 'i')
+  ShowWindow                = Win32API.new('user32'  , 'ShowWindow'               , 'ii'          , 'i')
+  SystemParametersInfo      = Win32API.new('user32'  , 'SystemParametersInfo'     , 'iipi'        , 'i')
+  UpdateWindow              = Win32API.new('user32'  , 'UpdateWindow'             , 'i'           , 'i')
+  GetPrivateProfileString   = Win32API.new('kernel32', 'GetPrivateProfileString'  , 'ppppip'      , 'i')
+  WritePrivateProfileString = Win32API.new('kernel32', 'WritePrivateProfileString', 'pppp'        , 'i')
+  CreateSolidBrush          = Win32API.new('gdi32'   , 'CreateSolidBrush'         , 'i'           , 'i')
+  DeleteObject              = Win32API.new('gdi32'   , 'DeleteObject'             , 'i'           , 'i')
+ 
+  unless method_defined?(:zeus_fullscreen_update)
+    HWND     = FindWindow.call('RGSS Player', 0)
+    BackHWND = CreateWindowEx.call(0x08000008, 'Static', '', 0x80000000, 0, 0, 0, 0, 0, 0, 0, 0)
+    alias zeus_fullscreen_resize_screen resize_screen
+    alias zeus_fullscreen_update        update
+  end
+private
+  def initialize_fullscreen_rects
+    @borders_size    ||= borders_size
+    @fullscreen_rect ||= screen_rect
+    @workarea_rect   ||= workarea_rect
+  end
+  def borders_size
+    GetWindowRect.call(HWND, wrect = [0, 0, 0, 0].pack('l4'))
+    GetClientRect.call(HWND, crect = [0, 0, 0, 0].pack('l4'))
+    wrect, crect = wrect.unpack('l4'), crect.unpack('l4')
+    Rect.new(0, 0, wrect[2]-wrect[0]-crect[2], wrect[3]-wrect[1]-crect[3])
+  end
+  def screen_rect
+    Rect.new(0, 0, GetSystemMetrics.call(0), GetSystemMetrics.call(1))
+  end
+  def workarea_rect
+    SystemParametersInfo.call(0x30, 0, rect = [0, 0, 0, 0].pack('l4'), 0)
+    rect = rect.unpack('l4')
+    Rect.new(rect[0], rect[1], rect[2]-rect[0], rect[3]-rect[1])
+  end
+  def hide_borders() SetWindowLong.call(HWND, -16, 0x14000000) end
+  def show_borders() SetWindowLong.call(HWND, -16, 0x14CA0000) end
+  def hide_back()    ShowWindow.call(BackHWND, 0)              end
+  def show_back
+    ShowWindow.call(BackHWND, 3)
+    UpdateWindow.call(BackHWND)
+    dc    = GetDC.call(BackHWND)
+    rect  = [0, 0, @fullscreen_rect.width, @fullscreen_rect.height].pack('l4')
+    brush = CreateSolidBrush.call(0)
+    FillRect.call(dc, rect, brush)
+    ReleaseDC.call(BackHWND, dc)
+    DeleteObject.call(brush)
+  end
+  def resize_window(w, h)
+    if @fullscreen
+      x, y, z = (@fullscreen_rect.width-w)/2, (@fullscreen_rect.height-h)/2, -1
+    else
+      w += @borders_size.width
+      h += @borders_size.height
+      x = @workarea_rect.x + (@workarea_rect.width  - w) / 2
+      y = @workarea_rect.y + (@workarea_rect.height - h) / 2
+      z = -2
+    end
+    SetWindowPos.call(HWND, z, x, y, w, h, 0)
+  end
+  def release_alt
+    inputs = [1,18,2, 1,164,2, 1,165,2].pack('LSx2Lx16'*3)
+    SendInput.call(3, inputs, 28)
+  end
+public
+  def load_fullscreen_settings
+    buffer = [].pack('x256')
+    section = 'Fullscreen++'
+    filename = './Game_Cheat.ini'
+    get_option = Proc.new do |key, default_value|
+      l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, filename)
+      buffer[0, l]
+    end
+    @fullscreen       = get_option.call('Fullscreen'     , '0') == '1'
+    @fullscreen_ratio = get_option.call('FullscreenRatio', '0').to_i
+    @windowed_ratio   = get_option.call('WindowedRatio'  , '1').to_i
+    toggle_vx_fullscreen if Disable_VX_Fullscreen and vx_fullscreen?
+    fullscreen? ? fullscreen_mode : windowed_mode
+  end
+  def save_fullscreen_settings
+    section = 'Fullscreen++'
+    filename = './Game_Cheat.ini'
+    set_option = Proc.new do |key, value|
+      WritePrivateProfileString.call(section, key, value.to_s, filename)
+    end
+    set_option.call('Fullscreen'     , @fullscreen ? '1' : '0')
+    set_option.call('FullscreenRatio', @fullscreen_ratio)
+    set_option.call('WindowedRatio'  , @windowed_ratio)
+  end
+  def fullscreen?
+    @fullscreen or vx_fullscreen?
+  end
+  def vx_fullscreen?
+    rect = screen_rect
+    rect.width == 640 and rect.height == 480
+  end
+  def toggle_fullscreen
+    fullscreen? ? windowed_mode : fullscreen_mode
+  end
+  def toggle_vx_fullscreen
+    windowed_mode if @fullscreen and !vx_fullscreen?
+    inputs = [1,18,0, 1,13,0, 1,13,2, 1,18,2].pack('LSx2Lx16'*4)
+    SendInput.call(4, inputs, 28)
+    zeus_fullscreen_update
+    self.ratio += 0 # refresh window size
+  end
+  def vx_fullscreen_mode
+    return if vx_fullscreen?
+    toggle_vx_fullscreen
+  end
+  def fullscreen_mode
+    return if vx_fullscreen?
+    initialize_fullscreen_rects
+    show_back
+    hide_borders
+    @fullscreen = true
+    self.ratio += 0 # refresh window size
+  end
+  def windowed_mode
+    toggle_vx_fullscreen if vx_fullscreen?
+    initialize_fullscreen_rects
+    hide_back
+    show_borders
+    @fullscreen = false
+    self.ratio += 0 # refresh window size
+  end
+  def toggle_ratio
+    return if vx_fullscreen?
+    self.ratio += 1
+  end
+  def ratio
+    return 1 if vx_fullscreen?
+    @fullscreen ? @fullscreen_ratio : @windowed_ratio
+  end
+  def ratio=(r)
+    return if vx_fullscreen?
+    initialize_fullscreen_rects
+    r = 0 if r < 0
+    if @fullscreen
+      @fullscreen_ratio = r
+      w_max, h_max = @fullscreen_rect.width, @fullscreen_rect.height
+    else
+      @windowed_ratio = r
+      w_max = @workarea_rect.width  - @borders_size.width
+      h_max = @workarea_rect.height - @borders_size.height
+    end
+    if r == 0
+      w, h = w_max, w_max * height / width
+      h, w = h_max, h_max * width / height if h > h_max
+    else
+      w, h = width * r, height * r
+      return self.ratio = 0 if w > w_max or h > h_max
+    end
+    resize_window(w, h)
+    save_fullscreen_settings
+  end
+  def update
+    release_alt if Disable_VX_Fullscreen and Input.trigger?(Input::ALT)
+    zeus_fullscreen_update
+    toggle_fullscreen if Input.trigger?(Input::F5)
+    toggle_ratio      if Input.trigger?(Input::F6)
+  end
+  def resize_screen(width, height)
+    zeus_fullscreen_resize_screen(width, height)
+    self.ratio += 0 # refresh window size
+  end
+end
+Graphics.load_fullscreen_settings
 	
 class Game_Player
 	alias :cheat_update :update
@@ -1218,8 +1777,14 @@ class Game_Player
 				l = GetPrivateProfileString.call(section, key, default_value, buffer, buffer.size, save_location)
 				buffer[0, l]
 			end
-			@c_debug = get_option.call('Debug',  '0').to_i
-			@c_exp   = get_option.call('Exp',    '0').to_i
+			@c_debug          = get_option.call('Debug'       ,     '0').to_i
+			@c_exp            = get_option.call('Exp'         ,     '1').to_i
+			@c_re             = get_option.call('Random_Event',     '0').to_i
+			@c_text_speed     = get_option.call('Text_Speed'  ,     '0').to_i
+			@c_bgm            = get_option.call('BGM'         ,     '-1').to_i
+			@c_bgs            = get_option.call('BGS'         ,     '-1').to_i
+			@c_me             = get_option.call('ME'          ,     '-1').to_i
+			@c_se             = get_option.call('SE'          ,     '-1').to_i
 			
 		if Input.press?(Input::F8)
 			$scene = Scene_Cheat.new

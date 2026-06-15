@@ -1,5 +1,6 @@
 # RPGM VX cheat
 Bug report are more than welcomed (dm @hifumi_chan on discord for faster response)
+Whole system getting remake soon (which mean those copy pasted code are getting replaced), i planned to bring at least most of [VX ACE cheat](https://github.com/TanCatTUwU/RPGM-VX-Ace-cheat-mod) function to this old engine, could take sometime. Meanwhile, enjoy this crappy cheat menu lol
 ## Credits
 - Me
 ## Feature
